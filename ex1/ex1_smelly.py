@@ -7,15 +7,11 @@ class OrderProcessor:
             raise ValueError("Order must contain items.")
 
         # Step 2: Calculate total price
-        total_price = 0
-        for item in order["items"]:
-            total_price += item["price"] * item["quantity"]
+        total_price = self.calculate_total_price(order["items"])
 
         # Step 3: Apply discounts if applicable
-        if order.get("discount_code") == "SUMMER20":
-            total_price *= 0.8  # 20% discount
-        elif order.get("discount_code") == "WELCOME10":
-            total_price *= 0.9  # 10% discount
+        discount = self.discount_order(order.get("discount_code"))
+        total_price *= (1 - discount)
 
         # Step 4: Update inventory
         for item in order["items"]:
@@ -37,3 +33,17 @@ class OrderProcessor:
 
         return receipt
 
+    def calculate_total_price(self, items):
+        total_price = 0
+        for item in items:
+            total_price += item["price"] * item["quantity"]
+        return total_price
+
+    def discount_order(self, discount_code):
+        discounts = {
+            "SUMMER20": 0.2,
+            "WELCOME10": 0.1,
+        }
+        return discounts.get(discount_code, 0)
+    
+    
